@@ -4,15 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.lifecycleScope
 import com.yidont.library.utils.saveFileToDownloadDir
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.bridge.UniJSCallback
 import io.dcloud.feature.uniapp.common.UniModule
 import io.dcloud.feature.uniapp.utils.UniLogUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.Executors
 
 
 open class FileModule : UniModule() {
@@ -52,7 +50,7 @@ open class FileModule : UniModule() {
             activity.getExternalFilesDir(null)?.parentFile,
             "apps/$appId/${filePath.replaceFirst("_", "")}"
         )
-        activity.lifecycleScope.launch(Dispatchers.IO) {
+        Executors.newSingleThreadExecutor().execute {
             try {
                 saveFileToDownloadDir(activity, file)
                 callback.invoke(file.name)
